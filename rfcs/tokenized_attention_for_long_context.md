@@ -35,6 +35,9 @@
 - So, here in the RFC, we proposed a distributed tokenized attention algorithm, to achieve long context while keeping high batch size and throughput, with
   better latency.
 
+## Reference
+- Self-attention described in [attention is all you need](https://arxiv.org/abs/1706.03762) can be described by a formula as:
+<img width="262" alt="image" src="https://github.com/Lifann/TokenizedAttention/assets/67221898/8abf3559-3607-4ea9-beaa-270ff55ae0be">
 
 ## **Proposed Implementation**
 This is the bulk of the RFC. Explain the design in enough detail for somebody familiar with PyTorch to understand, and for somebody familiar with the implementation to implement. 
