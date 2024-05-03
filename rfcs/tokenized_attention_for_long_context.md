@@ -8,13 +8,13 @@
 ## **Motivation**
 - Contemporary deep learning models in NLP and recommenders domains are widely built on transformer structure, where attention was used to represent the low-rank
   context space to score the tokens inside the context.
-- The L-square cost in storage and computation is pain in the bone for the engineering of transformer models, especially when the context grows too long.
+- The L-square cost in storage and computation is pain in the bone of the engineering of transformer models, especially when the context grows too long.
 - In practice, I found that the long context can significantly improve the expressive power of the model.
-- There are many researches on MP, DP, PP, TP strateges to split memory costs on multiple nodes, or apply more computing power on the attention. But the sparsity
+- There are many researches on MP, DP, PP, TP strategies to split memory costs on multiple nodes, or apply more computing power to the attention. But the sparsity
   existing in many real world datasets have not been taken into consideration in model construction.
 - In this RFC, I proposed a distributed tokenized attention algorithm, to achieve long context while keeping high batch size and throughput, with
-  better latency on full-rank self-attention or cross-attention, based on the sparsity of the symbolic datasets. Furthur more I proposed an enquivalent substitution
-  method of target attention, which is widely used in recommenders system industry, to remarkably reduce the computation, storage, and communication costs.
+  better latency on full-rank self-attention or cross-attention, based on the sparsity of the symbolic datasets. Furthermore, I proposed an equivalent substitution
+  method of target attention, which is widely used in the recommenders system industry, to remarkably reduce the computation, storage, and communication costs.
 
 ## Reference
 
@@ -30,12 +30,12 @@
   * `D`: `embedding dimension`
   The self-attention procedure can be described as follows:
   1. `tokens`: `(B, L)` is batched sequence. `lengths`: `(B,)` denotes lengths of sequence in each sample.
-     And there are `N` ranks and every rank hold one GPU.
-  2. Every rank read a mini-batch of `tokens`: `(B, L)`, and its `lengths`.
+     And there are `N` ranks and every rank holds one GPU.
+  2. Every rank reads a mini-batch of `tokens`: `(B, L)`, and its `lengths`.
   3. Every rank routes the `tokens` to dim-1, while recoding position of every token. The `rankwise-sizes`: `(N, B)`
-     is recorded to deontes the number of tokens which will be send to rank-i, and was generated from batch-j, where
-	 `(i, j)` is one of the element in `rankwise-sizes`. Position is an integer to mark where the token is.
-	 `pos = (rank * B + b) * L + pos-in-L`, where b is the sample id in mini batch of local rank, and pos-in-L is the
+     is recorded to denote the number of tokens which will be sent to rank-i, and was generated from batch-j, where
+	 `(i, j)` is one of the elements in `rankwise-sizes`. Position is an integer to mark where the token is.
+	 `pos = (rank * B + b) * L + pos-in-L`, where b is the sample id in mini-batch of local rank, and pos-in-L is the
 	 position in sample of the token.
   4. Alltoall the `rankwise-tokens`, and its `positions`. Alltoall the `rankwise-sizes`.
   5. Lookup the embedding parameter and get activated embeddings in MP-style, where keeping the distributed
